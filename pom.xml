@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <groupId>io.machinecode</groupId>
+        <artifactId>machinecode-parent-pom</artifactId>
+        <version>1.0.0.Final</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.machinecode</groupId>
+    <artifactId>sphinx</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Sphinx</name>
+
+    <scm>
+        <connection>scm:git:${git.machinecode.io}/sphinx.git</connection>
+        <developerConnection>scm:git:${git.machinecode.io}/sphinx.git</developerConnection>
+        <url>${github.machinecode.io}/sphinx.git</url>
+    </scm>
+
+    <modules>
+        <module>build</module>
+        <module>core</module>
+        <module>junit</module>
+        <module>testng</module>
+        <module>bom</module>
+    </modules>
+
+    <properties>
+        <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <version.org.jboss.sphinx.sphinx-bom>1.0.3.Final</version.org.jboss.sphinx.sphinx-bom>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>${version.org.jboss.arquillian.arquillian-bom}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>
