@@ -27,6 +27,7 @@
     <modules>
         <module>build</module>
         <module>core</module>
+        <module>example</module>
     </modules>
 
     <properties>
