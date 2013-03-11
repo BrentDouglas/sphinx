@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns="http://machinecode.io/schema/sphinx:1.0"
+        targetNamespace="http://machinecode.io/schema/sphinx:1.0"
+        version="1.0">
+
+    <xs:element name="sphinx" type="sphinxType"/>
+
+    <xs:complexType name="sphinxType">
+        <xs:annotation>
+            <xs:documentation>Configuration for the Sphinx Arquillian extension.</xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="archive" type="archiveType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="archiveType">
+        <xs:annotation>
+            <xs:documentation>An archive to be deployed before running tests.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="path-to-archive" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The filesystem location of archive to deploy.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="manifest-entry" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>A manifest dependency to be added to the test archives.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="replace-file" type="replaceType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="replaceType">
+        <xs:annotation>
+            <xs:documentation>File to be replaced in the dependency archive.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="existing" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The location within the archive of the file to be replaced.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="replacement" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The filesystem location of the replacement file.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
