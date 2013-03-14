@@ -31,6 +31,8 @@ public class ArchiveUtil {
     private static final Pattern JAR = Pattern.compile(JAR_SPLITTER);
     private static final Pattern WAR = Pattern.compile(WAR_SPLITTER);
 
+    private static volatile String tempDir;
+
     private Set<File> files = new HashSet<File>();
 
     public static ArchiveUtil replace(final Archive<?> archive, final String target, final File replacement) throws IOException {
@@ -43,6 +45,10 @@ public class ArchiveUtil {
             util.doReplace((JavaArchive) archive, target, replacement);
         }
         return util;
+    }
+
+    public static void setTempDir(final String tempDir) {
+        ArchiveUtil.tempDir = tempDir;
     }
 
     public void cleanUp() {
@@ -89,7 +95,7 @@ public class ArchiveUtil {
 
     private <T extends Archive<T>> T getReplacementArchive(final Class<T> clazz, final Node node) throws IOException {
             final InputStream stream = node.getAsset().openStream();
-            final File file = new File("/tmp/sphinx_" + NEXT++);
+            final File file = new File(tempDir + File.separatorChar + "sphinx_" + NEXT++);
             files.add(file);
             final FileOutputStream outputStream = new FileOutputStream(file);
             final byte[] buffer = new byte[1024*1024];

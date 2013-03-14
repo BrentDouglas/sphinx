@@ -22,12 +22,23 @@ public class SphinxConfig {
     public static final String EXTENSION_NAME = "sphinx";
     public static final String CONFIG_FILE = "config-file";
 
-    public static final String NAMESPACE = "http://machinecode.io/schema/sphinx:1.0";
+    public static final String NAMESPACE = "http://machinecode.io/schema/sphinx:0.1";
 
     private static SphinxConfig instance = null;
 
+    @XmlElement(name = "temp-dir", namespace = NAMESPACE, required = true)
+    private String tempDir;
+
     @XmlElement(name = "archive", namespace = NAMESPACE, required = false)
     private List<ArchiveConfig> archives = new ArrayList<ArchiveConfig>();
+
+    public String getTempDir() {
+        return tempDir;
+    }
+
+    public void setTempDir(final String tempDir) {
+        this.tempDir = tempDir;
+    }
 
     public List<ArchiveConfig> getArchives() {
         return archives;

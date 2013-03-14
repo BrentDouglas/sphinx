@@ -27,6 +27,37 @@ but is seperate to stop a bunch of sean2<->seam3 classloading problems.
 This config runs aginst AS7.2.0.Final and hibernate3 but should be
 easily adaptable.
 
+First off, in order to get the jar you will need to add this to either your project's `pom.xml` or `~/.m2/settings.xml`
+
+>     <repositories>
+>         <repository>
+>             <id>machinecode-repository</id>
+>             <name>MachineCode Repository</name>
+>             <url>http://repository.machinecode.io/nexus/content/repositories/machinecode</url>
+>             <releases>
+>                 <enabled>true</enabled>
+>                 <updatePolicy>never</updatePolicy>
+>             </releases>
+>             <snapshots>
+>                 <enabled>true</enabled>
+>                 <updatePolicy>never</updatePolicy>
+>             </snapshots>
+>         </repository>
+>         <repository>
+>             <id>machinecode-snapshots</id>
+>             <name>MachineCode Snapshots</name>
+>             <url>http://repository.machinecode.io/nexus/content/repositories/machinecode-snapshots</url>
+>             <releases>
+>                 <enabled>true</enabled>
+>                 <updatePolicy>never</updatePolicy>
+>             </releases>
+>             <snapshots>
+>                 <enabled>true</enabled>
+>                 <updatePolicy>never</updatePolicy>
+>             </snapshots>
+>         </repository>
+>     </repositories>
+
 In your parent `pom.xml` add a dependency on sphinx.
 
 >     <properties>
@@ -74,7 +105,6 @@ In your parent `pom.xml` add a dependency on sphinx.
 >             </dependency>
 >         </dependencies>
 >     </dependencyManagement>
-
 
 In `pom.xml` for your integration test module add a dependency on
 arquillian and sphinx
@@ -156,7 +186,7 @@ Now configure your surefire plugin to run arquillian with sphinx.
 >                     <type>war</type>
 >                     <overWrite>true</overWrite>
 >                     <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
->                     <destFileName>resources.war</destFileName>
+>                     <destFileName>web.war</destFileName>
 >                 </artifactItem>
 >             </artifactItems>
 >         </configuration>
@@ -220,9 +250,11 @@ Then create a `sphinx.xml` file in the location specified.
 
 >     <?xml version="1.0"?>
 >     <sphinx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
->             xmlns="http://machinecode.io/schema/sphinx:1.0"
->             xsi:schemaLocation="http://machinecode.io/schema/sphinx:1.0 http://machinecode.io/schema/sphinx_1_0.xsd">
->     
+>             xmlns="http://machinecode.io/schema/sphinx:0.1"
+>             xsi:schemaLocation="http://machinecode.io/schema/sphinx:0.1 http://machinecode.io/schema/sphinx_0_1.xsd">
+>
+>         <temp-dir>/tmp</temp-dir>
+>
 >         <archive>
 >             <path-to-archive>${dependency.directory}/resources.ear</path-to-archive>
 >             <manifest-entry>deployment.resources.ear</manifest-entry>

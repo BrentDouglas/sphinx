@@ -54,4 +54,17 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>machinecode-repository</id>
+            <name>MachineCode Repository</name>
+            <url>http://repository.machinecode.io/nexus/content/repositories/machinecode</url>
+        </repository>
+        <snapshotRepository>
+            <id>machinecode-snapshots</id>
+            <name>MachineCode Snapshots</name>
+            <url>http://repository.machinecode.io/nexus/content/repositories/machinecode-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

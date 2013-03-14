@@ -45,6 +45,8 @@ public class ArchiveDeployer {
 
         final SphinxConfig config = instance.get();
 
+        ArchiveUtil.setTempDir(config.getTempDir());
+
         for (final ArchiveConfig dependency : config.getArchives()) {
             final String deployment = dependency.getPathToArchive();
             final File file = new File(deployment.trim());
