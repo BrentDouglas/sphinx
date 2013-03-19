@@ -1,7 +1,6 @@
 package io.machinecode.sphinx;
 
 import io.machinecode.sphinx.dependency.DependencyArchiveProcessor;
-import io.machinecode.sphinx.dependency.DependencyDeployer;
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 

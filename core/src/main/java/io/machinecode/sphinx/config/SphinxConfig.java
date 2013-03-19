@@ -37,6 +37,9 @@ public class SphinxConfig {
     @XmlElement(name = "database", namespace = NAMESPACE, required = false)
     private List<DatabaseConfig> databases = new ArrayList<DatabaseConfig>();
 
+    @XmlElement(name = "cdi", namespace = NAMESPACE, required = false)
+    private CdiConfig cdi;
+
     public String getTempDir() {
         return tempDir;
     }
@@ -59,6 +62,18 @@ public class SphinxConfig {
 
     public void setDatabases(final List<DatabaseConfig> databases) {
         this.databases = databases;
+    }
+
+    public CdiConfig getCdi() {
+        return cdi;
+    }
+
+    public void setCdi(final CdiConfig cdi) {
+        this.cdi = cdi;
+    }
+
+    public boolean isCdiConfigured() {
+        return cdi != null;
     }
 
     public void validate() {

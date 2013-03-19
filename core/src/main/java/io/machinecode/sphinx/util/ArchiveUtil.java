@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -23,19 +24,19 @@ import java.util.regex.Pattern;
  */
 public class ArchiveUtil {
 
-    private static int NEXT = 0;
-
     private static final String JAR_SPLITTER = "(.*\\.jar)(.*)";
     private static final String WAR_SPLITTER = "(.*\\.war)(.*)";
 
     private static final Pattern JAR = Pattern.compile(JAR_SPLITTER);
     private static final Pattern WAR = Pattern.compile(WAR_SPLITTER);
 
+    private static final Set<File> FILES = Collections.synchronizedSet(new HashSet<File>());
+
+    private static volatile int NEXT = 0;
+
     private static volatile String tempDir;
 
-    private static Set<File> files = new HashSet<File>();
-
-    public static void  replace(final Archive<?> archive, final String target, final File replacement) throws IOException {
+    public static void replace(final Archive<?> archive, final String target, final File replacement) throws IOException {
         if (archive instanceof EnterpriseArchive) {
             doReplace((EnterpriseArchive) archive, target, replacement);
         } else if (archive instanceof WebArchive) {
@@ -50,7 +51,7 @@ public class ArchiveUtil {
     }
 
     public static void cleanUp() {
-        for (final File file : files) {
+        for (final File file : FILES) {
              file.delete();
         }
     }
@@ -80,7 +81,7 @@ public class ArchiveUtil {
         archive.add(new FileAsset(replacement), target);
     }
 
-    private static <T extends Archive<T>> void replaceSubDeployment(final EnterpriseArchive archive, final Class<T> clazz, final Matcher matcher, final File replacement) throws IOException {
+    public static <T extends Archive<T>> void replaceSubDeployment(final EnterpriseArchive archive, final Class<T> clazz, final Matcher matcher, final File replacement) throws IOException {
             final String path = matcher.group(1);
             final Node node = archive.get(path);
             final T replacementArchive = getReplacementArchive(clazz, node);
@@ -91,10 +92,10 @@ public class ArchiveUtil {
             archive.merge(replacementArchive, archivePath);
     }
 
-    private static <T extends Archive<T>> T getReplacementArchive(final Class<T> clazz, final Node node) throws IOException {
+    public static <T extends Archive<T>> T getReplacementArchive(final Class<T> clazz, final Node node) throws IOException {
             final InputStream stream = node.getAsset().openStream();
-            final File file = new File(tempDir + File.separatorChar + "sphinx_" + NEXT++);
-            files.add(file);
+            final File file = new File(tempDir + File.separator + "sphinx_" + NEXT++);
+            FILES.add(file);
             final FileOutputStream outputStream = new FileOutputStream(file);
             final byte[] buffer = new byte[1024*1024];
             int read;

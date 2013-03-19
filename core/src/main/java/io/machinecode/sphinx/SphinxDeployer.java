@@ -46,7 +46,7 @@ public class SphinxDeployer  {
         final List<Deployer> run = new ArrayList<Deployer>(deployers.size());
         try {
             for (final Deployer deployer : deployers) {
-                deployer.deploy(container, config);
+                deployer.deploy(event, container, config);
                 run.add(deployer);
             }
             deployed = true;
@@ -54,7 +54,7 @@ public class SphinxDeployer  {
             failure = e;
             for (final Deployer deployer : run) {
                 try {
-                    deployer.deploy(container, config);
+                    deployer.deploy(event, container, config);
                 } catch (final DeploymentException de) {
                     e.addSuppressed(de);
                 }

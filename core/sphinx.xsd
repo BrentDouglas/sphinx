@@ -26,6 +26,7 @@
             </xs:element>
             <xs:element name="database" type="databaseType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="archive" type="archiveType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="cdi" type="cdiType" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -113,6 +114,24 @@
             <xs:element name="replacement" type="xs:string" minOccurs="1" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation>The filesystem location of the replacement file.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="cdiType">
+        <xs:annotation>
+            <xs:documentation>CDI options to allow sphinx to communicate with your container.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="bind-address" type="xs:string" default="localhost" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The address of the machine running sphinx. If you are deploying to a remote container it will need to be able to resolve this.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="port" type="xs:int" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The port to listen on.</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>

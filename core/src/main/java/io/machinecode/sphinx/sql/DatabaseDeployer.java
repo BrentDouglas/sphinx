@@ -8,6 +8,7 @@ import io.machinecode.sphinx.util.PathUtil;
 import org.jboss.arquillian.container.spi.ConfigurationException;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
+import org.jboss.arquillian.container.spi.event.container.BeforeDeploy;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -45,7 +46,7 @@ public class DatabaseDeployer implements Deployer {
     private final List<String> tasksRun = new ArrayList<String>();
 
     @Override
-    public void deploy(final Container container, final SphinxConfig config) throws DeploymentException {
+    public void deploy(final BeforeDeploy event, final Container container, final SphinxConfig config) throws DeploymentException {
         if (config.getDatabases() == null) {
             return;
         }
@@ -101,11 +102,9 @@ public class DatabaseDeployer implements Deployer {
                     );
 
             for (final DatabaseConfig databaseConfig : config.getDatabases()) {
-                final String pre = databaseConfig.getPreDeployment();
-                final String post = databaseConfig.getPostDeployment();
                 final String id = databaseConfig.getId();
                 archive.addAsResource(
-                        new File(pre),
+                        new File(databaseConfig.getPreDeployment()),
                         "/" + id + "/" + PRE_DEPLOY_SQL
                     ).addAsResource(
                             new File(databaseConfig.getPostDeployment()),
