@@ -33,41 +33,39 @@ public class ArchiveUtil {
 
     private static volatile String tempDir;
 
-    private Set<File> files = new HashSet<File>();
+    private static Set<File> files = new HashSet<File>();
 
-    public static ArchiveUtil replace(final Archive<?> archive, final String target, final File replacement) throws IOException {
-        final ArchiveUtil util = new ArchiveUtil();
+    public static void  replace(final Archive<?> archive, final String target, final File replacement) throws IOException {
         if (archive instanceof EnterpriseArchive) {
-            util.doReplace((EnterpriseArchive) archive, target, replacement);
+            doReplace((EnterpriseArchive) archive, target, replacement);
         } else if (archive instanceof WebArchive) {
-            util.doReplace((WebArchive) archive, target, replacement);
+            doReplace((WebArchive) archive, target, replacement);
         } else if (archive instanceof JavaArchive) {
-            util.doReplace((JavaArchive) archive, target, replacement);
+            doReplace((JavaArchive) archive, target, replacement);
         }
-        return util;
     }
 
     public static void setTempDir(final String tempDir) {
         ArchiveUtil.tempDir = tempDir;
     }
 
-    public void cleanUp() {
+    public static void cleanUp() {
         for (final File file : files) {
              file.delete();
         }
     }
 
-    private void doReplace(final JavaArchive archive, final String target, final File replacement) {
+    private static void doReplace(final JavaArchive archive, final String target, final File replacement) {
         archive.delete(target);
         archive.add(new FileAsset(replacement), target);
     }
 
-    private void doReplace(final WebArchive archive, final String target, final File replacement) {
+    private static void doReplace(final WebArchive archive, final String target, final File replacement) {
         archive.delete(target);
         archive.add(new FileAsset(replacement), target);
     }
 
-    private void doReplace(final EnterpriseArchive archive, final String target, final File replacement) throws IOException {
+    private static void doReplace(final EnterpriseArchive archive, final String target, final File replacement) throws IOException {
         final Matcher jarMatcher = JAR.matcher(target);
         if (jarMatcher.matches()) {
             replaceSubDeployment(archive, JavaArchive.class, jarMatcher, replacement);
@@ -82,7 +80,7 @@ public class ArchiveUtil {
         archive.add(new FileAsset(replacement), target);
     }
 
-    private <T extends Archive<T>> void replaceSubDeployment(final EnterpriseArchive archive, final Class<T> clazz, final Matcher matcher, final File replacement) throws IOException {
+    private static <T extends Archive<T>> void replaceSubDeployment(final EnterpriseArchive archive, final Class<T> clazz, final Matcher matcher, final File replacement) throws IOException {
             final String path = matcher.group(1);
             final Node node = archive.get(path);
             final T replacementArchive = getReplacementArchive(clazz, node);
@@ -93,7 +91,7 @@ public class ArchiveUtil {
             archive.merge(replacementArchive, archivePath);
     }
 
-    private <T extends Archive<T>> T getReplacementArchive(final Class<T> clazz, final Node node) throws IOException {
+    private static <T extends Archive<T>> T getReplacementArchive(final Class<T> clazz, final Node node) throws IOException {
             final InputStream stream = node.getAsset().openStream();
             final File file = new File(tempDir + File.separatorChar + "sphinx_" + NEXT++);
             files.add(file);

@@ -1,5 +1,6 @@
-package io.machinecode.sphinx;
+package io.machinecode.sphinx.dependency;
 
+import io.machinecode.sphinx.Deployer;
 import io.machinecode.sphinx.config.ArchiveConfig;
 import io.machinecode.sphinx.config.ReplacementConfig;
 import io.machinecode.sphinx.config.SphinxConfig;
@@ -7,11 +8,7 @@ import io.machinecode.sphinx.util.ArchiveUtil;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
-import org.jboss.arquillian.container.spi.event.container.BeforeDeploy;
-import org.jboss.arquillian.container.spi.event.container.BeforeStop;
-import org.jboss.arquillian.core.api.Instance;
-import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
@@ -21,32 +18,19 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Stuart Douglas
  */
-public class ArchiveDeployer {
+public class DependencyDeployer implements Deployer {
 
-    @Inject
-    private Instance<SphinxConfig> instance;
+    private static final Logger log = Logger.getLogger(DependencyDeployer.class);
 
     private List<Archive> archives = new ArrayList<Archive>();
-    private boolean deployed = false;
-    private Set<ArchiveUtil> cleanup = new HashSet<ArchiveUtil>(); //TODO
 
-    public synchronized void deploy(@Observes final BeforeDeploy event, final Container container) throws DeploymentException {
-        if (deployed) {
-            return;
-        }
-        deployed = true;
-
-        final SphinxConfig config = instance.get();
-
-        ArchiveUtil.setTempDir(config.getTempDir());
-
+    @Override
+    public void deploy(final Container container, final SphinxConfig config) throws DeploymentException {
         for (final ArchiveConfig dependency : config.getArchives()) {
             final String deployment = dependency.getPathToArchive();
             final File file = new File(deployment.trim());
@@ -62,31 +46,26 @@ public class ArchiveDeployer {
                 archive = ShrinkWrap.createFromZipFile(JavaArchive.class, file);
             }
 
-            for (final ReplacementConfig replacement: dependency.getReplacements()) {
+            for (final ReplacementConfig replacement : dependency.getReplacements()) {
                 try {
-                    cleanup.add(ArchiveUtil.replace(archive, replacement.getExisting(), new File(replacement.getReplacement())));
+                    ArchiveUtil.replace(archive, replacement.getExisting(), new File(replacement.getReplacement()));
                 } catch (IOException e) {
-                    cleanUp();
                     throw new DeploymentException("Failed replacing file " + replacement.getExisting() + " with " + replacement.getReplacement(), e);
                 }
             }
 
             archives.add(archive);
+            log.info("Deploying " + archive.getName());
             container.getDeployableContainer().deploy(archive);
         }
     }
 
-    public synchronized void undeploy(@Observes final BeforeStop event, final Container container) throws DeploymentException {
+    @Override
+    public void undeploy(final Container container, final SphinxConfig config) throws DeploymentException {
+        final DeployableContainer<?> deployableContainer = container.getDeployableContainer();
         for (final Archive archive : archives) {
-            final DeployableContainer<?> deployableContainer = container.getDeployableContainer();
+            log.info("Undeploying " + archive.getName());
             deployableContainer.undeploy(archive);
-        }
-        cleanUp();
-    }
-
-    private void cleanUp() {
-        for (final ArchiveUtil util : cleanup) {
-            util.cleanUp();
         }
     }
 }

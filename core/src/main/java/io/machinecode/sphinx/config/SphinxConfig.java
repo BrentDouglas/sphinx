@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,9 @@ public class SphinxConfig {
     @XmlElement(name = "archive", namespace = NAMESPACE, required = false)
     private List<ArchiveConfig> archives = new ArrayList<ArchiveConfig>();
 
+    @XmlElement(name = "database", namespace = NAMESPACE, required = false)
+    private List<DatabaseConfig> databases = new ArrayList<DatabaseConfig>();
+
     public String getTempDir() {
         return tempDir;
     }
@@ -48,9 +52,20 @@ public class SphinxConfig {
         this.archives = archives;
     }
 
+    public List<DatabaseConfig> getDatabases() {
+        return databases;
+    }
+
+    public void setDatabases(final List<DatabaseConfig> databases) {
+        this.databases = databases;
+    }
+
     public void validate() {
         for (final ArchiveConfig archive : archives) {
             archive.validate();
+        }
+        for (final DatabaseConfig database : databases) {
+            database.validate();
         }
     }
 
@@ -73,6 +88,15 @@ public class SphinxConfig {
             return instance;
         } catch (final JAXBException e) {
             throw new IllegalStateException("Failed loading Sphinx config", e);
+        }
+    }
+
+    public void write(final OutputStream stream) {
+        try {
+            final JAXBContext context = JAXBContext.newInstance(SphinxConfig.class);
+            context.createMarshaller().marshal(this, stream);
+        } catch (final JAXBException e) {
+            throw new IllegalStateException("Failed writing Sphinx config", e);
         }
 
     }

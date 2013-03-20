@@ -1,4 +1,4 @@
-package io.machinecode.sphinx;
+package io.machinecode.sphinx.dependency;
 
 import io.machinecode.sphinx.config.ArchiveConfig;
 import io.machinecode.sphinx.config.SphinxConfig;
@@ -24,7 +24,7 @@ import java.util.jar.Manifest;
 /**
  * @author Stuart Douglas
  */
-public class ArchiveProcessor implements ApplicationArchiveProcessor {
+public class DependencyArchiveProcessor implements ApplicationArchiveProcessor {
 
     @Inject
     private Instance<SphinxConfig> instance;
