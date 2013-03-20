@@ -1,8 +1,10 @@
 package io.machinecode.sphinx;
 
 import io.machinecode.sphinx.config.ArchiveConfig;
+import io.machinecode.sphinx.config.DatabaseConfig;
 import io.machinecode.sphinx.config.ReplacementConfig;
 import io.machinecode.sphinx.config.SphinxConfig;
+import io.machinecode.sphinx.sql.SchemaImporter;
 import io.machinecode.sphinx.util.ArchiveUtil;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
@@ -36,9 +38,13 @@ public class ArchiveDeployer {
     private List<Archive> archives = new ArrayList<Archive>();
     private boolean deployed = false;
     private Set<ArchiveUtil> cleanup = new HashSet<ArchiveUtil>(); //TODO
+    private DeploymentException failure;
 
     public synchronized void deploy(@Observes final BeforeDeploy event, final Container container) throws DeploymentException {
         if (deployed) {
+            if (failure != null) {
+                throw failure;
+            }
             return;
         }
         deployed = true;
@@ -47,11 +53,24 @@ public class ArchiveDeployer {
 
         ArchiveUtil.setTempDir(config.getTempDir());
 
+
+        if (config.getDatabases() != null) {
+            for (final DatabaseConfig database : config.getDatabases()) {
+                try {
+                    SchemaImporter.importSchema(database);
+                } catch (Exception e) {
+                    failure = new DeploymentException("Could not setup databases ", e);
+                    throw failure;
+                }
+            }
+        }
+
         for (final ArchiveConfig dependency : config.getArchives()) {
             final String deployment = dependency.getPathToArchive();
             final File file = new File(deployment.trim());
             if (!file.exists()) {
-                throw new DeploymentException("File " + file + " does not exist");
+                failure = new DeploymentException("File " + file + " does not exist");
+                throw failure;
             }
             final Archive<?> archive;
             if (file.getName().endsWith(".ear")) {
@@ -67,7 +86,8 @@ public class ArchiveDeployer {
                     cleanup.add(ArchiveUtil.replace(archive, replacement.getExisting(), new File(replacement.getReplacement())));
                 } catch (IOException e) {
                     cleanUp();
-                    throw new DeploymentException("Failed replacing file " + replacement.getExisting() + " with " + replacement.getReplacement(), e);
+                    failure = new DeploymentException("Failed replacing file " + replacement.getExisting() + " with " + replacement.getReplacement(), e);
+                    throw failure;
                 }
             }
 

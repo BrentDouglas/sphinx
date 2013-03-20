@@ -32,6 +32,9 @@ public class SphinxConfig {
     @XmlElement(name = "archive", namespace = NAMESPACE, required = false)
     private List<ArchiveConfig> archives = new ArrayList<ArchiveConfig>();
 
+    @XmlElement(name = "database", namespace = NAMESPACE, required = false)
+    private List<DatabaseConfig> databases = new ArrayList<DatabaseConfig>();
+
     public String getTempDir() {
         return tempDir;
     }
@@ -48,9 +51,20 @@ public class SphinxConfig {
         this.archives = archives;
     }
 
+    public List<DatabaseConfig> getDatabases() {
+        return databases;
+    }
+
+    public void setDatabases(final List<DatabaseConfig> databases) {
+        this.databases = databases;
+    }
+
     public void validate() {
         for (final ArchiveConfig archive : archives) {
             archive.validate();
+        }
+        for (final DatabaseConfig database : databases) {
+            database.validate();
         }
     }
 

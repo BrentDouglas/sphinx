@@ -16,7 +16,45 @@
                     <xs:documentation>The filesystem location of a directory for sphinx to create temporary files in.</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="database" type="databaseType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="archive" type="archiveType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="databaseType">
+        <xs:annotation>
+            <xs:documentation>A database to be configured before running tests.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="path-to-schema" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The filesystem location of a schema sql file to be entered into the database.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="jdbc-connection-string" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The jdbc string sphinx will use to connect to the database.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="driver" type="driverType" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="driverType">
+        <xs:annotation>
+            <xs:documentation>A driver to use to connect to the database.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="driver-class" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The classname of the driver.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="path-to-driver-jar" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The path to the driver jar.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 
