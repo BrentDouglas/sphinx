@@ -9,8 +9,6 @@ import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.sql.Connection;
@@ -31,6 +29,9 @@ public class DatabaseImporter {
     private static final Logger log = Logger.getLogger(DatabaseImporter.class.getCanonicalName());
 
     public static final String SPHINX_XML = "sphinx.xml";
+    public static final String DRIVER_JAR = "driver.jar";
+    public static final String PRE_DEPLOY_SQL = "pre-deploy.sql";
+    public static final String POST_DEPLOY_SQL = "post-deploy.sql";
 
     @PostConstruct
     private void create() throws Exception {
@@ -40,7 +41,7 @@ public class DatabaseImporter {
     }
 
     @PreDestroy
-    private void destroy() throws Exception {
+    private void destroy() {
         final ClassLoader loader = getClass().getClassLoader();
         final SphinxConfig config = SphinxConfig.getConfig(loader.getResourceAsStream(SPHINX_XML));
         postDeployment(config.getDatabases(), loader);
@@ -52,28 +53,52 @@ public class DatabaseImporter {
         }
         for (final DatabaseConfig config : configs) {
             if (config.isRunInContainer()) {
-                runScript(config, new InputStreamReader(loader.getResourceAsStream(config.getId() + File.separator + config.getPreDeployment())));
+                final String pre = config.getPreDeployment();
+                final Reader reader = new InputStreamReader(loader.getResourceAsStream("/" + config.getId() + "/" + PRE_DEPLOY_SQL));
+                runScript(config, reader, new DriverProducer() {
+                    @Override
+                    public Driver produce() throws Exception {
+                        return DelegateDriver.from(
+                                config.getDriver().getDriverClass(),
+                                loader.getResource("/" + config.getId() + "/" + DRIVER_JAR)
+                        );
+                    }
+                });
             }
         }
     }
 
-    private static void postDeployment(final List<DatabaseConfig> configs, final ClassLoader loader) throws Exception {
+    private static void postDeployment(final List<DatabaseConfig> configs, final ClassLoader loader) {
         if (configs == null) {
             return;
         }
         for (final DatabaseConfig config : configs) {
             if (config.isRunInContainer()) {
-                runScript(config, new InputStreamReader(loader.getResourceAsStream(config.getId() + File.separator + config.getPostDeployment())));
+                try {
+                    final String post = config.getPostDeployment();
+                    final Reader reader = new InputStreamReader(loader.getResourceAsStream("/" + config.getId() + "/" + POST_DEPLOY_SQL));
+                    runScript(config, reader, new DriverProducer() {
+                        @Override
+                        public Driver produce() throws Exception {
+                            return DelegateDriver.from(
+                                    config.getDriver().getDriverClass(),
+                                    loader.getResource("/" + config.getId() + "/" + DRIVER_JAR)
+                            );
+                        }
+                    });
+                } catch (final Exception e) {
+                    log.severe("Failed running post deployment sql script " + config.getPostDeployment() + ": " + e.getMessage());
+                }
             }
         }
     }
 
-    public static void runScript(final DatabaseConfig config, final Reader reader) throws Exception {
+    public static void runScript(final DatabaseConfig config, final Reader reader, final DriverProducer producer) throws Exception {
         Connection connection = null;
         try {
             final DriverConfig driverConfig = config.getDriver();
             if (driverConfig != null) {
-                final Driver driver = DelegateDriver.from(driverConfig);
+                final Driver driver = producer.produce();
                 connection = driver.connect(config.getJdbcConnection(), new Properties());
             } else {
                 connection = DriverManager.getConnection(config.getJdbcConnection());
@@ -81,12 +106,6 @@ public class DatabaseImporter {
 
             processScript(connection, new BufferedReader(reader));
 
-        } catch (final SQLException e) {
-            log.severe("Failed connecting to " + config.getJdbcConnection());
-            throw e;
-        } catch (final IOException e) {
-            log.severe("Failed reading sql file");
-            throw e;
         } finally {
             if (connection != null) {
                 try {

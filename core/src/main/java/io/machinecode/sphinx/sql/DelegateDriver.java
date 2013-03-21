@@ -31,6 +31,11 @@ public class DelegateDriver implements Driver {
         return (Driver) Class.forName(config.getDriverClass(), true, urlClassLoader).newInstance();
     }
 
+    public static Driver from(final String driverClass, final URL url) throws Exception {
+        final URLClassLoader urlClassLoader = new URLClassLoader(new URL[] { url });
+        return (Driver) Class.forName(driverClass, true, urlClassLoader).newInstance();
+    }
+
     @Override
     public Connection connect(final String url, final Properties info) throws SQLException {
         return delegate.connect(url, info);

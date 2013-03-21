@@ -19,6 +19,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
+import java.io.Reader;
+import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,10 +29,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.jar.JarFile;
 
+import static io.machinecode.sphinx.sql.DatabaseImporter.DRIVER_JAR;
+import static io.machinecode.sphinx.sql.DatabaseImporter.POST_DEPLOY_SQL;
+import static io.machinecode.sphinx.sql.DatabaseImporter.PRE_DEPLOY_SQL;
+
 /**
- * TODO: This currently only provides the filesystem ref of the
- * schema file to deployer and will not work on remote containers.
- *
  * @author Brent Douglas <brent.n.douglas@gmail.com>
  */
 public class DatabaseDeployer implements Deployer {
@@ -41,7 +44,7 @@ public class DatabaseDeployer implements Deployer {
 
     private final List<String> tasksRun = new ArrayList<String>();
 
-        @Override
+    @Override
     public void deploy(final Container container, final SphinxConfig config) throws DeploymentException {
         if (config.getDatabases() == null) {
             return;
@@ -54,8 +57,14 @@ public class DatabaseDeployer implements Deployer {
             } else {
                 final String file = databaseConfig.getPreDeployment();
                 try {
-                    tasksRun.add(file); //Well want to try and clean this one up even if it fails
-                    DatabaseImporter.runScript(databaseConfig, new FileReader(new File(file)));
+                    tasksRun.add(file); //We'll want to try and clean this one up even if it fails half way through
+                    final Reader reader = new FileReader(new File(file));
+                    DatabaseImporter.runScript(databaseConfig, reader, new DriverProducer() {
+                        @Override
+                        public Driver produce() throws Exception {
+                            return DelegateDriver.from(databaseConfig.getDriver());
+                        }
+                    });
                 } catch (Exception e) {
                     final DeploymentException exception = new DeploymentException("Failed running pre deployment sql task " + file, e);
                     try {
@@ -82,6 +91,7 @@ public class DatabaseDeployer implements Deployer {
                     .addAsResource(getClass().getClassLoader().getResource("ejb-jar.xml"), "META-INF/ejb-jar.xml")
                     .addPackage(SphinxConfig.class.getPackage())
                     .addClass(DatabaseImporter.class)
+                    .addClass(DriverProducer.class)
                     .addClass(DelegateDriver.class)
                     .addClass(PathUtil.class)
                     .addClass(ConfigurationException.class)
@@ -91,8 +101,22 @@ public class DatabaseDeployer implements Deployer {
                     );
 
             for (final DatabaseConfig databaseConfig : config.getDatabases()) {
-                archive.addAsResource(new File(databaseConfig.getPreDeployment()), databaseConfig.getId() + File.separator + databaseConfig.getPreDeployment())
-                    .addAsResource(new File(databaseConfig.getPostDeployment()), databaseConfig.getId() + File.separator + databaseConfig.getPostDeployment());
+                final String pre = databaseConfig.getPreDeployment();
+                final String post = databaseConfig.getPostDeployment();
+                final String id = databaseConfig.getId();
+                archive.addAsResource(
+                        new File(pre),
+                        "/" + id + "/" + PRE_DEPLOY_SQL
+                    ).addAsResource(
+                            new File(databaseConfig.getPostDeployment()),
+                            "/" + id + "/" + POST_DEPLOY_SQL
+                    );
+                if (databaseConfig.getDriver() != null) {
+                    archive.addAsResource(
+                            new File(databaseConfig.getDriver().getPathToDriverJar()),
+                            "/" + id + "/" + DRIVER_JAR
+                    );
+                }
             }
 
             log.info("Deploying " + archive.getName());
@@ -102,7 +126,6 @@ public class DatabaseDeployer implements Deployer {
 
     @Override
     public void undeploy(final Container container, final SphinxConfig config) throws DeploymentException {
-        DeploymentException failure = null;
         try {
             runPostScripts(config);
         } finally {
@@ -119,7 +142,13 @@ public class DatabaseDeployer implements Deployer {
             final String file = databaseConfig.getPostDeployment();
             if (tasksRun.contains(databaseConfig.getPreDeployment())) {
                 try {
-                    DatabaseImporter.runScript(databaseConfig, new FileReader(new File(file)));
+                    final Reader reader = new FileReader(new File(file));
+                    DatabaseImporter.runScript(databaseConfig, reader, new DriverProducer() {
+                        @Override
+                        public Driver produce() throws Exception {
+                            return DelegateDriver.from(databaseConfig.getDriver());
+                        }
+                    });
                 } catch (Exception e) {
                     failures.put(file, e);
                 }

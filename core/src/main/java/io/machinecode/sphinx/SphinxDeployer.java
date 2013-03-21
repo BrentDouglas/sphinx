@@ -12,6 +12,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,13 +43,22 @@ public class SphinxDeployer  {
         final SphinxConfig config = instance.get();
         ArchiveUtil.setTempDir(config.getTempDir());
 
+        final List<Deployer> run = new ArrayList<Deployer>(deployers.size());
         try {
             for (final Deployer deployer : deployers) {
                 deployer.deploy(container, config);
+                run.add(deployer);
             }
             deployed = true;
         } catch (final DeploymentException e) {
             failure = e;
+            for (final Deployer deployer : run) {
+                try {
+                    deployer.deploy(container, config);
+                } catch (final DeploymentException de) {
+                    e.addSuppressed(de);
+                }
+            }
             ArchiveUtil.cleanUp();
             throw failure;
         }
