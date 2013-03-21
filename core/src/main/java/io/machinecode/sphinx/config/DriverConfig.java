@@ -5,6 +5,7 @@ import io.machinecode.sphinx.util.PathUtil;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
+import static io.machinecode.sphinx.config.SphinxConfig.*;
 import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 
 /**
@@ -13,10 +14,10 @@ import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 @XmlAccessorType(FIELD)
 public class DriverConfig {
 
-    @XmlElement(name = "driver-class", namespace = SphinxConfig.NAMESPACE, required = true)
+    @XmlElement(name = "driver-class", namespace = NAMESPACE, required = true)
     private String driverClass;
 
-    @XmlElement(name = "path-to-driver-jar", namespace = SphinxConfig.NAMESPACE, required = true)
+    @XmlElement(name = "path-to-driver-jar", namespace = NAMESPACE, required = true)
     private String pathToDriverJar;
 
     public void validate() {

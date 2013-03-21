@@ -5,6 +5,7 @@ import io.machinecode.sphinx.util.PathUtil;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
+import static io.machinecode.sphinx.config.SphinxConfig.*;
 import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 
 /**
@@ -13,10 +14,10 @@ import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 @XmlAccessorType(FIELD)
 public class ReplacementConfig {
 
-    @XmlElement(name = "existing", namespace = SphinxConfig.NAMESPACE, required = true)
+    @XmlElement(name = "existing", namespace = NAMESPACE, required = true)
     private String existing;
 
-    @XmlElement(name = "replacement", namespace = SphinxConfig.NAMESPACE, required = true)
+    @XmlElement(name = "replacement", namespace = NAMESPACE, required = true)
     private String replacement;
 
     public void validate() {

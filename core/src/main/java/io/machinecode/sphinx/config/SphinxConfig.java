@@ -12,12 +12,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.machinecode.sphinx.config.SphinxConfig.*;
 import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 
 /**
  * @author Brent Douglas <brent.n.douglas@gmail.com>
  */
-@XmlRootElement(namespace = SphinxConfig.NAMESPACE, name = "sphinx")
+@XmlRootElement(namespace = NAMESPACE, name = "sphinx")
 @XmlAccessorType(FIELD)
 public class SphinxConfig {
     public static final String EXTENSION_NAME = "sphinx";

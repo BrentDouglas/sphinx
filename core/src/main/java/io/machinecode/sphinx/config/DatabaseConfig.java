@@ -5,6 +5,7 @@ import io.machinecode.sphinx.util.PathUtil;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
+import static io.machinecode.sphinx.config.SphinxConfig.*;
 import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 
 /**
@@ -13,19 +14,22 @@ import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 @XmlAccessorType(FIELD)
 public class DatabaseConfig {
 
-    @XmlElement(name = "run-in-container", namespace = SphinxConfig.NAMESPACE, required = false)
+    @XmlElement(name = "id", namespace = NAMESPACE, required = true)
+    private String id;
+
+    @XmlElement(name = "run-in-container", namespace = NAMESPACE, required = false)
     private boolean runInContainer;
 
-    @XmlElement(name = "pre-deployment", namespace = SphinxConfig.NAMESPACE, required = false)
+    @XmlElement(name = "pre-deployment", namespace = NAMESPACE, required = false)
     private String preDeployment;
 
-    @XmlElement(name = "post-deployment", namespace = SphinxConfig.NAMESPACE, required = false)
+    @XmlElement(name = "post-deployment", namespace = NAMESPACE, required = false)
     private String postDeployment;
 
-    @XmlElement(name = "jdbc-connection-string", namespace = SphinxConfig.NAMESPACE, required = true)
+    @XmlElement(name = "jdbc-connection-string", namespace = NAMESPACE, required = true)
     private String jdbcConnection;
 
-    @XmlElement(name = "driver", namespace = SphinxConfig.NAMESPACE, required = false)
+    @XmlElement(name = "driver", namespace = NAMESPACE, required = false)
     private DriverConfig driver;
 
     public void validate() {
@@ -34,6 +38,14 @@ public class DatabaseConfig {
         if (driver != null) {
             driver.validate();
         }
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(final String id) {
+        this.id = id;
     }
 
     public boolean isRunInContainer() {

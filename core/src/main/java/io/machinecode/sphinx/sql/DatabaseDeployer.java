@@ -16,6 +16,8 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,7 +55,7 @@ public class DatabaseDeployer implements Deployer {
                 final String file = databaseConfig.getPreDeployment();
                 try {
                     tasksRun.add(file); //Well want to try and clean this one up even if it fails
-                    DatabaseImporter.runScript(databaseConfig, file);
+                    DatabaseImporter.runScript(databaseConfig, new FileReader(new File(file)));
                 } catch (Exception e) {
                     final DeploymentException exception = new DeploymentException("Failed running pre deployment sql task " + file, e);
                     try {
@@ -76,7 +78,7 @@ public class DatabaseDeployer implements Deployer {
                             config.write(stream);
                             return new ByteArrayInputStream(stream.toByteArray());
                         }
-                    }, DatabaseImporter.RESOURCE)
+                    }, DatabaseImporter.SPHINX_XML)
                     .addAsResource(getClass().getClassLoader().getResource("ejb-jar.xml"), "META-INF/ejb-jar.xml")
                     .addPackage(SphinxConfig.class.getPackage())
                     .addClass(DatabaseImporter.class)
@@ -87,6 +89,11 @@ public class DatabaseDeployer implements Deployer {
                             ManifestUtil.getAsset(ManifestUtil.get(Arrays.asList("javaee.api"))),
                             ArchivePaths.create(JarFile.MANIFEST_NAME)
                     );
+
+            for (final DatabaseConfig databaseConfig : config.getDatabases()) {
+                archive.addAsResource(new File(databaseConfig.getPreDeployment()), databaseConfig.getId() + File.separator + databaseConfig.getPreDeployment())
+                    .addAsResource(new File(databaseConfig.getPostDeployment()), databaseConfig.getId() + File.separator + databaseConfig.getPostDeployment());
+            }
 
             log.info("Deploying " + archive.getName());
             container.getDeployableContainer().deploy(archive);
@@ -112,7 +119,7 @@ public class DatabaseDeployer implements Deployer {
             final String file = databaseConfig.getPostDeployment();
             if (tasksRun.contains(databaseConfig.getPreDeployment())) {
                 try {
-                    DatabaseImporter.runScript(databaseConfig, file);
+                    DatabaseImporter.runScript(databaseConfig, new FileReader(new File(file)));
                 } catch (Exception e) {
                     failures.put(file, e);
                 }

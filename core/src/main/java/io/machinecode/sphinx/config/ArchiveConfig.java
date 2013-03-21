@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.machinecode.sphinx.config.SphinxConfig.*;
 import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 
 /**
@@ -15,13 +16,13 @@ import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 @XmlAccessorType(FIELD)
 public class ArchiveConfig {
 
-    @XmlElement(name = "path-to-archive", namespace = SphinxConfig.NAMESPACE, required = true)
+    @XmlElement(name = "path-to-archive", namespace = NAMESPACE, required = true)
     private String pathToArchive;
 
-    @XmlElement(name = "manifest-entry", namespace = SphinxConfig.NAMESPACE, required = false)
+    @XmlElement(name = "manifest-entry", namespace = NAMESPACE, required = false)
     private List<String> dependencies = new ArrayList<String>();
 
-    @XmlElement(name = "replace-file", namespace = SphinxConfig.NAMESPACE, required = false)
+    @XmlElement(name = "replace-file", namespace = NAMESPACE, required = false)
     private List<ReplacementConfig> replacements = new ArrayList<ReplacementConfig>();
 
     public void validate() {

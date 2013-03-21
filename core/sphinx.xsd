@@ -4,7 +4,15 @@
         targetNamespace="http://machinecode.io/schema/sphinx:0.1"
         version="0.1">
 
-    <xs:element name="sphinx" type="sphinxType"/>
+    <xs:element name="sphinx" type="sphinxType">
+        <xs:unique name="unique-database-id">
+            <xs:annotation>
+                <xs:documentation>Databases need to have a unique id.</xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="database"/>
+            <xs:field xpath="id"/>
+        </xs:unique>
+    </xs:element>
 
     <xs:complexType name="sphinxType">
         <xs:annotation>
@@ -26,6 +34,11 @@
             <xs:documentation>A database to be configured before running tests.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
+            <xs:element name="id" type="xs:string" minOccurs="1" maxOccurs="1" >
+                <xs:annotation>
+                    <xs:documentation>The filesystem location of an sql file to be run before any archives are deployments.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="run-in-container" type="xs:boolean" default="false" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation>If this is true the schema will be deployed from inside the container. This is useful if you have an in memory H2 database and require your database connection to come from the same JVM as your deployments.</xs:documentation>
