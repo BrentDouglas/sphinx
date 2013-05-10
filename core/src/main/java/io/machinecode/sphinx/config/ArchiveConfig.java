@@ -1,6 +1,6 @@
 package io.machinecode.sphinx.config;
 
-import io.machinecode.sphinx.util.PathUtil;
+import io.machinecode.sphinx.util.PropertyUtil;
 
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -26,7 +26,7 @@ public class ArchiveConfig {
     private List<ReplacementConfig> replacements = new ArrayList<ReplacementConfig>();
 
     public void validate() {
-        pathToArchive = PathUtil.resolve(pathToArchive);
+        pathToArchive = PropertyUtil.resolve(pathToArchive);
         for (final ReplacementConfig replacement : replacements) {
             replacement.validate();
         }

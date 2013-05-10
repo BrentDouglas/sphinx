@@ -26,6 +26,7 @@
 
     <modules>
         <module>build</module>
+        <module>browser</module>
         <module>core</module>
     </modules>
 
@@ -34,6 +35,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+        <version.com.browserstack.tunnel>1.1.0</version.com.browserstack.tunnel>
+        <version.org.codehaus.jackson>1.9.12</version.org.codehaus.jackson>
+        <version.commons-codec.commons-codec>1.7</version.commons-codec.commons-codec>
+        <version.org.codehaus.jackson.jackson-core-asl>${version.org.codehaus.jackson}</version.org.codehaus.jackson.jackson-core-asl>
+        <version.org.codehaus.jackson.jackson-mapper-asl>${version.org.codehaus.jackson}</version.org.codehaus.jackson.jackson-mapper-asl>
         <version.org.jboss.arquillian.arquillian-bom>1.0.3.Final</version.org.jboss.arquillian.arquillian-bom>
         <version.org.jboss.logging.jboss-logging>3.1.2.GA</version.org.jboss.logging.jboss-logging>
         <version.org.jboss.spec.jboss-javaee-6.0>2.0.0.Final</version.org.jboss.spec.jboss-javaee-6.0>
@@ -41,6 +47,33 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.machinecode.sphinx</groupId>
+                <artifactId>sphinx-browser</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${version.commons-codec.commons-codec}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.browserstack</groupId>
+                <artifactId>tunnel</artifactId>
+                <version>${version.com.browserstack.tunnel}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <version>${version.org.codehaus.jackson.jackson-core-asl}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>${version.org.codehaus.jackson.jackson-mapper-asl}</version>
+            </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>

@@ -1,7 +1,7 @@
 package io.machinecode.sphinx;
 
+import io.machinecode.sphinx.browser.BrowserstackArchiveProcessor;
 import io.machinecode.sphinx.dependency.DependencyArchiveProcessor;
-import io.machinecode.sphinx.dependency.DependencyDeployer;
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 
@@ -13,6 +13,8 @@ public class SphinxLoadableExtension implements LoadableExtension {
     public void register(final ExtensionBuilder builder) {
         builder.observer(SphinxDeployer.class)
                 .observer(ConfigurationProducer.class)
-                .service(ApplicationArchiveProcessor.class, DependencyArchiveProcessor.class);
+                .service(ApplicationArchiveProcessor.class, DependencyArchiveProcessor.class)
+                .observer(BrowserstackArchiveProcessor.class)
+                .service(ApplicationArchiveProcessor.class, BrowserstackArchiveProcessor.class);
     }
 }

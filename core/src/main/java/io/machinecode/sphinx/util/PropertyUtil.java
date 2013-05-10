@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 /**
  * @author Brent Douglas <brent.n.douglas@gmail.com>
  */
-public class PathUtil {
+public class PropertyUtil {
 
     private static final String PROPERTY_START = "\\$\\{";
     private static final String PROPERTY_END = "\\}";

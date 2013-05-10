@@ -1,6 +1,6 @@
 package io.machinecode.sphinx.config;
 
-import io.machinecode.sphinx.util.PathUtil;
+import io.machinecode.sphinx.util.PropertyUtil;
 
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -33,8 +33,8 @@ public class DatabaseConfig {
     private DriverConfig driver;
 
     public void validate() {
-        preDeployment = PathUtil.resolve(preDeployment);
-        postDeployment = PathUtil.resolve(postDeployment);
+        preDeployment = PropertyUtil.resolve(preDeployment);
+        postDeployment = PropertyUtil.resolve(postDeployment);
         if (driver != null) {
             driver.validate();
         }

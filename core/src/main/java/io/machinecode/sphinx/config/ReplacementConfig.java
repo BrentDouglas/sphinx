@@ -1,6 +1,6 @@
 package io.machinecode.sphinx.config;
 
-import io.machinecode.sphinx.util.PathUtil;
+import io.machinecode.sphinx.util.PropertyUtil;
 
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -21,7 +21,7 @@ public class ReplacementConfig {
     private String replacement;
 
     public void validate() {
-        replacement = PathUtil.resolve(replacement);
+        replacement = PropertyUtil.resolve(replacement);
     }
 
     public String getExisting() {

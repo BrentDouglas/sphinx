@@ -37,6 +37,9 @@ public class SphinxConfig {
     @XmlElement(name = "database", namespace = NAMESPACE, required = false)
     private List<DatabaseConfig> databases = new ArrayList<DatabaseConfig>();
 
+    @XmlElement(name = "browserstack", namespace = NAMESPACE, required = false)
+    private BrowserStackConfig browserStack;
+
     public String getTempDir() {
         return tempDir;
     }
@@ -61,6 +64,14 @@ public class SphinxConfig {
         this.databases = databases;
     }
 
+    public BrowserStackConfig getBrowserStack() {
+        return browserStack;
+    }
+
+    public void setBrowserStack(final BrowserStackConfig browserStack) {
+        this.browserStack = browserStack;
+    }
+
     public void validate() {
         for (final ArchiveConfig archive : archives) {
             archive.validate();
@@ -68,6 +79,7 @@ public class SphinxConfig {
         for (final DatabaseConfig database : databases) {
             database.validate();
         }
+        browserStack.validate();
     }
 
     public static synchronized SphinxConfig getConfig(final String filename) {

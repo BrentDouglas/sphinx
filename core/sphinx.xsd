@@ -26,6 +26,7 @@
             </xs:element>
             <xs:element name="database" type="databaseType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="archive" type="archiveType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="browserstack" type="browserStackType" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -113,6 +114,48 @@
             <xs:element name="replacement" type="xs:string" minOccurs="1" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation>The filesystem location of the replacement file.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="browserStackType">
+        <xs:annotation>
+            <xs:documentation>A connection to browserstack.com to be configured before running tests.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="tunnel-key" type="xs:string" minOccurs="1" maxOccurs="1" >
+                <xs:annotation>
+                    <xs:documentation>The command line tunnel key as described in the browserstack documentation.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="api-key" type="xs:string" minOccurs="1" maxOccurs="1" >
+                <xs:annotation>
+                    <xs:documentation>The API key as described in the browserstack documentation.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="host" type="browserStackHostType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="browserStackHostType">
+        <xs:annotation>
+            <xs:documentation>A host for browserstack.com to connect to.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="hostname" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The hostname.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="port" type="xs:integer" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The port.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ssl" type="xs:boolean" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>If the connection uses SSL.</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>

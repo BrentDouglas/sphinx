@@ -4,7 +4,7 @@ import io.machinecode.sphinx.Deployer;
 import io.machinecode.sphinx.config.DatabaseConfig;
 import io.machinecode.sphinx.config.SphinxConfig;
 import io.machinecode.sphinx.util.ManifestUtil;
-import io.machinecode.sphinx.util.PathUtil;
+import io.machinecode.sphinx.util.PropertyUtil;
 import org.jboss.arquillian.container.spi.ConfigurationException;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.container.DeploymentException;
@@ -93,7 +93,7 @@ public class DatabaseDeployer implements Deployer {
                     .addClass(DatabaseImporter.class)
                     .addClass(DriverProducer.class)
                     .addClass(DelegateDriver.class)
-                    .addClass(PathUtil.class)
+                    .addClass(PropertyUtil.class)
                     .addClass(ConfigurationException.class)
                     .addAsManifestResource(
                             ManifestUtil.getAsset(ManifestUtil.get(Arrays.asList("javaee.api"))),
