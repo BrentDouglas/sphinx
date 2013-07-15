@@ -53,7 +53,6 @@ public class DatabaseImporter {
         }
         for (final DatabaseConfig config : configs) {
             if (config.isRunInContainer()) {
-                final String pre = config.getPreDeployment();
                 final Reader reader = new InputStreamReader(loader.getResourceAsStream("/" + config.getId() + "/" + PRE_DEPLOY_SQL));
                 runScript(config, reader, new DriverProducer() {
                     @Override
