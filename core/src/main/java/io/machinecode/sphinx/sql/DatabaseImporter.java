@@ -9,6 +9,7 @@ import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.sql.Connection;
@@ -53,16 +54,32 @@ public class DatabaseImporter {
         }
         for (final DatabaseConfig config : configs) {
             if (config.isRunInContainer()) {
-                final Reader reader = new InputStreamReader(loader.getResourceAsStream("/" + config.getId() + "/" + PRE_DEPLOY_SQL));
-                runScript(config, reader, new DriverProducer() {
-                    @Override
-                    public Driver produce() throws Exception {
-                        return DelegateDriver.from(
-                                config.getDriver().getDriverClass(),
-                                loader.getResource("/" + config.getId() + "/" + DRIVER_JAR)
-                        );
+                Reader reader = null;
+                try {
+                    final String pre = config.getPreDeployment();
+                    if (pre != null) {
+                        reader = new InputStreamReader(loader.getResourceAsStream("/" + config.getId() + "/" + PRE_DEPLOY_SQL));
+                        runScript(config, reader, new DriverProducer() {
+                            @Override
+                            public Driver produce() throws Exception {
+                                return DelegateDriver.from(
+                                        config.getDriver().getDriverClass(),
+                                        loader.getResource("/" + config.getId() + "/" + DRIVER_JAR)
+                                );
+                            }
+                        });
                     }
-                });
+                } catch (final Exception e) {
+                    log.severe("Failed running post deployment sql script " + config.getPostDeployment() + ": " + e.getMessage());
+                } finally {
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (final IOException e) {
+                            //
+                        }
+                    }
+                }
             }
         }
     }
@@ -73,20 +90,31 @@ public class DatabaseImporter {
         }
         for (final DatabaseConfig config : configs) {
             if (config.isRunInContainer()) {
+                Reader reader = null;
                 try {
                     final String post = config.getPostDeployment();
-                    final Reader reader = new InputStreamReader(loader.getResourceAsStream("/" + config.getId() + "/" + POST_DEPLOY_SQL));
-                    runScript(config, reader, new DriverProducer() {
-                        @Override
-                        public Driver produce() throws Exception {
-                            return DelegateDriver.from(
-                                    config.getDriver().getDriverClass(),
-                                    loader.getResource("/" + config.getId() + "/" + DRIVER_JAR)
-                            );
-                        }
-                    });
+                    if (post != null) {
+                        reader = new InputStreamReader(loader.getResourceAsStream("/" + config.getId() + "/" + POST_DEPLOY_SQL));
+                        runScript(config, reader, new DriverProducer() {
+                            @Override
+                            public Driver produce() throws Exception {
+                                return DelegateDriver.from(
+                                        config.getDriver().getDriverClass(),
+                                        loader.getResource("/" + config.getId() + "/" + DRIVER_JAR)
+                                );
+                            }
+                        });
+                    }
                 } catch (final Exception e) {
                     log.severe("Failed running post deployment sql script " + config.getPostDeployment() + ": " + e.getMessage());
+                } finally {
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (final IOException e) {
+                            //
+                        }
+                    }
                 }
             }
         }

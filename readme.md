@@ -6,8 +6,7 @@ architecture.
 
 ## Objectives
 
-I have a large project with many entities and EJB's which takes a long
-time to deploy. Arquillian allows testing this sort of app by using
+Arquillian allows testing pre-built applications using
 `Shrinkwrap.createFromZipFile("/path/to/the-ear.ear")` but that means
 each test will deploy your whole archive _once per test_ which is not
 practical for larger applications.

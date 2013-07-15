@@ -102,6 +102,7 @@ public class ArchiveUtil {
                 outputStream.write(buffer, 0, read);
             }
             outputStream.flush();
+            outputStream.close();
             return ShrinkWrap.createFromZipFile(clazz, file);
     }
 }
