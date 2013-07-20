@@ -401,3 +401,7 @@ If you have a better way to do anything that this projet does I would love to
 hear about it. This was only made as I couldn't find another way to
 conveniently run arquillian tests against a decent sized application that
 wasn't designed to be able to be seperated into a bunch of test-sized pieces.
+
+## License
+
+[Apache 2](http://www.apache.org/licenses/LICENSE-2.0.html)
