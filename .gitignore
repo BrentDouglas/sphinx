@@ -1,6 +1,8 @@
 # Ant && Maven output
 src/generated
 target
+release.properties
+*.releaseBackup
 
 # VIM
 *.swp
