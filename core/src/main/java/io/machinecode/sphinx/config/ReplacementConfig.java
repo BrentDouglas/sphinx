@@ -5,7 +5,7 @@ import io.machinecode.sphinx.util.PathUtil;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-import static io.machinecode.sphinx.config.SphinxConfig.*;
+import static io.machinecode.sphinx.config.SphinxConfig.NAMESPACE;
 import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 
 /**

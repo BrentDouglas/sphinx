@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.machinecode.sphinx.config.SphinxConfig.*;
+import static io.machinecode.sphinx.config.SphinxConfig.NAMESPACE;
 import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 
 /**
