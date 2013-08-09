@@ -5,7 +5,7 @@
     <parent>
         <artifactId>sphinx-parent</artifactId>
         <groupId>io.machinecode.sphinx</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.1.0.Final</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
