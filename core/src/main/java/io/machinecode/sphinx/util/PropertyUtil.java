@@ -8,15 +8,18 @@ import java.util.regex.Pattern;
 /**
  * @author Brent Douglas <brent.n.douglas@gmail.com>
  */
-public class PathUtil {
+public class PropertyUtil {
 
     private static final String PROPERTY_START = "\\$\\{";
     private static final String PROPERTY_END = "\\}";
     private static final String PROPERTY_MATCHER = ".*" + PROPERTY_START + "(.*)" + PROPERTY_END + ".*";
 
-    private static final Pattern PATTERN = Pattern.compile(PROPERTY_MATCHER);
+    private static final Pattern PATTERN = Pattern.compile(PROPERTY_MATCHER, Pattern.MULTILINE | Pattern.DOTALL);
 
     public static String resolve(String path) {
+        if (path == null) {
+            return null;
+        }
         Matcher matcher;
         while ((matcher = PATTERN.matcher(path)).matches()) {
             final String property = matcher.group(1);

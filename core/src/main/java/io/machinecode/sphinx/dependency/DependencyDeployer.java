@@ -48,7 +48,7 @@ public class DependencyDeployer implements Deployer {
 
             for (final ReplacementConfig replacement : dependency.getReplacements()) {
                 try {
-                    ArchiveUtil.replace(archive, replacement.getExisting(), new File(replacement.getReplacement()));
+                    ArchiveUtil.replace(archive, replacement.getExisting(), new File(replacement.getReplacement()), replacement.isSubstituteProperties());
                 } catch (IOException e) {
                     throw new DeploymentException("Failed replacing file " + replacement.getExisting() + " with " + replacement.getReplacement(), e);
                 }

@@ -1,8 +1,11 @@
 package io.machinecode.sphinx.config;
 
+import io.machinecode.sphinx.util.PropertyUtil;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.FileInputStream;
@@ -24,11 +27,11 @@ public class SphinxConfig {
     public static final String EXTENSION_NAME = "sphinx";
     public static final String CONFIG_FILE = "config-file";
 
-    public static final String NAMESPACE = "http://machinecode.io/schema/sphinx:0.1";
+    public static final String NAMESPACE = "http://machinecode.io/schema/sphinx:0.1.1";
 
     private static SphinxConfig instance = null;
 
-    @XmlElement(name = "temp-dir", namespace = NAMESPACE, required = true)
+    @XmlAttribute(name = "temp-dir", required = true)
     private String tempDir;
 
     @XmlElement(name = "archive", namespace = NAMESPACE, required = false)
@@ -62,6 +65,7 @@ public class SphinxConfig {
     }
 
     public void validate() {
+        tempDir = PropertyUtil.resolve(tempDir);
         for (final ArchiveConfig archive : archives) {
             archive.validate();
         }

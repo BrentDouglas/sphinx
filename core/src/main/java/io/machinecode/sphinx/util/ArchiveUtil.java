@@ -9,8 +9,11 @@ import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
+import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -35,7 +38,10 @@ public class ArchiveUtil {
 
     private static Set<File> files = new HashSet<File>();
 
-    public static void  replace(final Archive<?> archive, final String target, final File replacement) throws IOException {
+    public static void  replace(final Archive<?> archive, final String target, File replacement, final boolean substituteProperties) throws IOException {
+        if (substituteProperties) {
+            replacement = replaceFileProperties(replacement);
+        }
         if (archive instanceof EnterpriseArchive) {
             doReplace((EnterpriseArchive) archive, target, replacement);
         } else if (archive instanceof WebArchive) {
@@ -85,7 +91,7 @@ public class ArchiveUtil {
             final Node node = archive.get(path);
             final T replacementArchive = getReplacementArchive(clazz, node);
             final String subSection = matcher.group(2);
-            replace(replacementArchive, subSection, replacement);
+            replace(replacementArchive, subSection, replacement, false);
             final ArchivePath archivePath = node.getPath();
             archive.delete(archivePath);
             archive.merge(replacementArchive, archivePath);
@@ -104,5 +110,25 @@ public class ArchiveUtil {
             outputStream.flush();
             outputStream.close();
             return ShrinkWrap.createFromZipFile(clazz, file);
+    }
+
+    private static File replaceFileProperties(final File inFile) throws IOException {
+        final FileReader stream = new FileReader(inFile); //TODO Allow different encoding?
+        final CharArrayWriter bytes = new CharArrayWriter();
+        final char[] buffer = new char[1024*1024];
+        int read;
+        while((read = stream.read(buffer)) > 0) {
+            bytes.write(buffer, 0, read);
+        }
+
+        final String fileAsString = PropertyUtil.resolve(new String(bytes.toCharArray()));
+
+        final File outFile = new File(tempDir + File.separatorChar + "sphinx_" + NEXT++);
+        files.add(outFile);
+        final FileWriter writer = new FileWriter(outFile);
+        writer.write(fileAsString);
+        writer.flush();
+        writer.close();
+        return outFile;
     }
 }

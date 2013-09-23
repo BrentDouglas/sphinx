@@ -5,11 +5,10 @@
     <parent>
         <artifactId>sphinx-parent</artifactId>
         <groupId>io.machinecode.sphinx</groupId>
-        <version>0.1.0.Final</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.machinecode.sphinx</groupId>
     <artifactId>sphinx-core</artifactId>
     <name>Sphinx Core</name>
 

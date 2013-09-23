@@ -1,11 +1,12 @@
 package io.machinecode.sphinx.config;
 
-import io.machinecode.sphinx.util.PathUtil;
+import io.machinecode.sphinx.util.PropertyUtil;
 
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import static io.machinecode.sphinx.config.SphinxConfig.NAMESPACE;
 import static javax.xml.bind.annotation.XmlAccessType.FIELD;
@@ -26,7 +27,11 @@ public class ArchiveConfig {
     private List<ReplacementConfig> replacements = new ArrayList<ReplacementConfig>();
 
     public void validate() {
-        pathToArchive = PathUtil.resolve(pathToArchive);
+        pathToArchive = PropertyUtil.resolve(pathToArchive);
+        final ListIterator<String> it = dependencies.listIterator();
+        while (it.hasNext()) {
+            it.set(PropertyUtil.resolve(it.next()));
+        }
         for (final ReplacementConfig replacement : replacements) {
             replacement.validate();
         }

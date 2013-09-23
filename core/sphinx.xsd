@@ -1,118 +1,186 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-        xmlns="http://machinecode.io/schema/sphinx:0.1"
-        targetNamespace="http://machinecode.io/schema/sphinx:0.1"
-        version="0.1">
+           xmlns="http://machinecode.io/schema/sphinx:0.1.1"
+           targetNamespace="http://machinecode.io/schema/sphinx:0.1.1"
+           version="0.1.1">
 
-    <xs:element name="sphinx" type="sphinxType">
+    <xs:element name="sphinx" type="SphinxType">
         <xs:unique name="unique-database-id">
             <xs:annotation>
-                <xs:documentation>Databases need to have a unique id.</xs:documentation>
+                <xs:documentation>
+                    Databases need to have a unique id.
+                </xs:documentation>
             </xs:annotation>
             <xs:selector xpath="database"/>
             <xs:field xpath="id"/>
         </xs:unique>
     </xs:element>
 
-    <xs:complexType name="sphinxType">
+    <xs:complexType name="SphinxType">
         <xs:annotation>
-            <xs:documentation>Configuration for the Sphinx Arquillian extension.</xs:documentation>
+            <xs:documentation>
+                Configuration for the Sphinx Arquillian extension.
+            </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="temp-dir" type="xs:string" minOccurs="1" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>The filesystem location of a directory for sphinx to create temporary files in.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="database" type="databaseType" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="archive" type="archiveType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="database" type="DatabaseType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="archive" type="ArchiveType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="cdi" type="CdiType" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
+        <xs:attribute name="temp-dir" use="required" type="xs:string" >
+            <xs:annotation>
+                <xs:documentation>
+                    The filesystem location of a directory for sphinx to create temporary files in.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
-    <xs:complexType name="databaseType">
+    <xs:complexType name="DatabaseType">
         <xs:annotation>
             <xs:documentation>A database to be configured before running tests.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="id" type="xs:string" minOccurs="1" maxOccurs="1" >
-                <xs:annotation>
-                    <xs:documentation>The filesystem location of an sql file to be run before any archives are deployments.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
             <xs:element name="run-in-container" type="xs:boolean" default="false" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>If this is true the schema will be deployed from inside the container. This is useful if you have an in memory H2 database and require your database connection to come from the same JVM as your deployments.</xs:documentation>
+                    <xs:documentation>
+                        If this is true the schema will be deployed from inside the container. This is useful if you
+                        have an in memory H2 database and require your database connection to come from the same JVM as
+                        your deployments.
+                    </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="pre-deployment" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>The filesystem location of an sql file to be run before any archives are deployments.</xs:documentation>
+                    <xs:documentation>
+                        The filesystem location of an sql file to be run before any archives are deployments.
+                    </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="post-deployment" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>The filesystem location of an sql file to be run after all deployments have been undeployed.</xs:documentation>
+                    <xs:documentation>
+                        The filesystem location of an sql file to be run after all deployments have been undeployed.
+                    </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="jdbc-connection-string" type="xs:string" minOccurs="1" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>The jdbc string sphinx will use to connect to the database.</xs:documentation>
+                    <xs:documentation>
+                        The jdbc string sphinx will use to connect to the database.
+                    </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="driver" type="driverType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="driver" type="DriverType" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
+        <xs:attribute name="id" use="required" type="xs:string" >
+            <xs:annotation>
+                <xs:documentation>
+                    The filesystem location of an sql file to be run before any archives are deployments.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
-    <xs:complexType name="driverType">
+    <xs:complexType name="DriverType">
         <xs:annotation>
-            <xs:documentation>A driver to use to connect to the database.</xs:documentation>
+            <xs:documentation>
+                A driver to use to connect to the database.
+            </xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="driver-class" type="xs:string" minOccurs="1" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>The classname of the driver.</xs:documentation>
+                    <xs:documentation>
+                        The classname of the driver.
+                    </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="path-to-driver-jar" type="xs:string" minOccurs="1" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>The path to the driver jar.</xs:documentation>
+                    <xs:documentation>
+                        The path to the driver jar.
+                    </xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="archiveType">
+    <xs:complexType name="ArchiveType">
         <xs:annotation>
-            <xs:documentation>An archive to be deployed before running tests.</xs:documentation>
+            <xs:documentation>
+                An archive to be deployed before running tests.
+            </xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="path-to-archive" type="xs:string" minOccurs="1" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>The filesystem location of archive to deploy.</xs:documentation>
+                    <xs:documentation>
+                        The filesystem location of archive to deploy.
+                    </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="manifest-entry" type="xs:string" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
-                    <xs:documentation>A manifest dependency to be added to the test archives.</xs:documentation>
+                    <xs:documentation>
+                        A manifest dependency to be added to the test archives.
+                    </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="replace-file" type="replaceType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="replace-file" type="ReplaceType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="replaceType">
+    <xs:complexType name="ReplaceType">
         <xs:annotation>
-            <xs:documentation>File to be replaced in the dependency archive.</xs:documentation>
+            <xs:documentation>
+                File to be replaced in the dependency archive.
+            </xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="existing" type="xs:string" minOccurs="1" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>The location within the archive of the file to be replaced.</xs:documentation>
+                    <xs:documentation>
+                        The location within the archive of the file to be replaced.
+                    </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="replacement" type="xs:string" minOccurs="1" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>The filesystem location of the replacement file.</xs:documentation>
+                    <xs:documentation>
+                        The filesystem location of the replacement file.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="substitute-properties" use="optional" type="xs:boolean" default="false">
+            <xs:annotation>
+                <xs:documentation>
+                    If true this file will be read as a string and passed in system properties
+                    will be attempted to be substituted.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="CdiType">
+        <xs:annotation>
+            <xs:documentation>CDI options to allow sphinx to communicate with your container.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="bind-address" type="xs:string" default="localhost" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The address of the machine running sphinx. If you are deploying to a remote container it will
+                        need to be able to resolve this.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="port" type="xs:int" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The port to listen on.
+                    </xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>

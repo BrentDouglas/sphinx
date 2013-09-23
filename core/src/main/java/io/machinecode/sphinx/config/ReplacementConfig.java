@@ -1,8 +1,9 @@
 package io.machinecode.sphinx.config;
 
-import io.machinecode.sphinx.util.PathUtil;
+import io.machinecode.sphinx.util.PropertyUtil;
 
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import static io.machinecode.sphinx.config.SphinxConfig.NAMESPACE;
@@ -14,6 +15,9 @@ import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 @XmlAccessorType(FIELD)
 public class ReplacementConfig {
 
+    @XmlAttribute(name = "substitute-properties")
+    private boolean substituteProperties = false;
+
     @XmlElement(name = "existing", namespace = NAMESPACE, required = true)
     private String existing;
 
@@ -21,7 +25,16 @@ public class ReplacementConfig {
     private String replacement;
 
     public void validate() {
-        replacement = PathUtil.resolve(replacement);
+        existing = PropertyUtil.resolve(existing);
+        replacement = PropertyUtil.resolve(replacement);
+    }
+
+    public boolean isSubstituteProperties() {
+        return substituteProperties;
+    }
+
+    public void setSubstituteProperties(final boolean substituteProperties) {
+        this.substituteProperties = substituteProperties;
     }
 
     public String getExisting() {

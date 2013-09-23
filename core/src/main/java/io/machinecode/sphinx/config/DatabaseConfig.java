@@ -1,8 +1,9 @@
 package io.machinecode.sphinx.config;
 
-import io.machinecode.sphinx.util.PathUtil;
+import io.machinecode.sphinx.util.PropertyUtil;
 
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import static io.machinecode.sphinx.config.SphinxConfig.NAMESPACE;
@@ -14,7 +15,7 @@ import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 @XmlAccessorType(FIELD)
 public class DatabaseConfig {
 
-    @XmlElement(name = "id", namespace = NAMESPACE, required = true)
+    @XmlAttribute(name = "id", required = true)
     private String id;
 
     @XmlElement(name = "run-in-container", namespace = NAMESPACE, required = false)
@@ -33,8 +34,9 @@ public class DatabaseConfig {
     private DriverConfig driver;
 
     public void validate() {
-        preDeployment = PathUtil.resolve(preDeployment);
-        postDeployment = PathUtil.resolve(postDeployment);
+        preDeployment = PropertyUtil.resolve(preDeployment);
+        postDeployment = PropertyUtil.resolve(postDeployment);
+        jdbcConnection = PropertyUtil.resolve(jdbcConnection);
         if (driver != null) {
             driver.validate();
         }

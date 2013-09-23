@@ -13,7 +13,7 @@
 
     <groupId>io.machinecode.sphinx</groupId>
     <artifactId>sphinx-build</artifactId>
-    <version>0.1.0.Final</version>
+    <version>0.1.1-SNAPSHOT</version>
     <name>Sphinx Build</name>
 
 </project>

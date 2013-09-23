@@ -1,6 +1,6 @@
 package io.machinecode.sphinx.config;
 
-import io.machinecode.sphinx.util.PathUtil;
+import io.machinecode.sphinx.util.PropertyUtil;
 
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -21,7 +21,8 @@ public class DriverConfig {
     private String pathToDriverJar;
 
     public void validate() {
-        pathToDriverJar = PathUtil.resolve(pathToDriverJar);
+        driverClass = PropertyUtil.resolve(driverClass);
+        pathToDriverJar = PropertyUtil.resolve(pathToDriverJar);
     }
 
     public String getDriverClass() {
