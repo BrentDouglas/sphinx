@@ -35,10 +35,10 @@ public class SphinxConfig {
     private String tempDir;
 
     @XmlElement(name = "archive", namespace = NAMESPACE, required = false)
-    private List<ArchiveConfig> archives = new ArrayList<ArchiveConfig>();
+    private List<ArchiveConfig> archives = new ArrayList<>();
 
     @XmlElement(name = "database", namespace = NAMESPACE, required = false)
-    private List<DatabaseConfig> databases = new ArrayList<DatabaseConfig>();
+    private List<DatabaseConfig> databases = new ArrayList<>();
 
     public String getTempDir() {
         return tempDir;

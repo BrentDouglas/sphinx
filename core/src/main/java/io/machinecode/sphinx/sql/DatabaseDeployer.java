@@ -67,9 +67,8 @@ public class DatabaseDeployer implements Deployer {
                             runPostScripts(config);
                         } catch (final DeploymentException de) {
                             exception.addSuppressed(de);
-                        } finally {
-                            throw exception;
                         }
+                        throw exception;
                     }
                 }
             }
@@ -139,7 +138,7 @@ public class DatabaseDeployer implements Deployer {
     }
 
     private void runPostScripts(final SphinxConfig config) throws DeploymentException {
-        final Map<String, Exception> failures = new HashMap<String, Exception>();
+        final Map<String, Exception> failures = new HashMap<>();
         for (final DatabaseConfig databaseConfig : config.getDatabases()) {
             final String post = databaseConfig.getPostDeployment();
             if (post != null) {
@@ -151,7 +150,7 @@ public class DatabaseDeployer implements Deployer {
                             return DelegateDriver.from(databaseConfig.getDriver());
                         }
                     });
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     failures.put(post, e);
                 }
             }

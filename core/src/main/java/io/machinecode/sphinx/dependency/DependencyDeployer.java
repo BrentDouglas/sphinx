@@ -27,7 +27,7 @@ public class DependencyDeployer implements Deployer {
 
     private static final Logger log = Logger.getLogger(DependencyDeployer.class);
 
-    private List<Archive> archives = new ArrayList<Archive>();
+    private List<Archive> archives = new ArrayList<>();
 
     @Override
     public void deploy(final Container container, final SphinxConfig config) throws DeploymentException {

@@ -21,10 +21,10 @@ public class ArchiveConfig {
     private String pathToArchive;
 
     @XmlElement(name = "manifest-entry", namespace = NAMESPACE, required = false)
-    private List<String> dependencies = new ArrayList<String>();
+    private List<String> dependencies = new ArrayList<>();
 
     @XmlElement(name = "replace-file", namespace = NAMESPACE, required = false)
-    private List<ReplacementConfig> replacements = new ArrayList<ReplacementConfig>();
+    private List<ReplacementConfig> replacements = new ArrayList<>();
 
     public void validate() {
         pathToArchive = PropertyUtil.resolve(pathToArchive);

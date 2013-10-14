@@ -43,7 +43,7 @@ public class SphinxDeployer  {
         final SphinxConfig config = instance.get();
         ArchiveUtil.setTempDir(config.getTempDir());
 
-        final List<Deployer> run = new ArrayList<Deployer>(deployers.size());
+        final List<Deployer> run = new ArrayList<>(deployers.size());
         try {
             for (final Deployer deployer : deployers) {
                 deployer.deploy(container, config);
