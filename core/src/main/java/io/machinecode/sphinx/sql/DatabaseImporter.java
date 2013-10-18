@@ -70,7 +70,7 @@ public class DatabaseImporter {
                         });
                     }
                 } catch (final Exception e) {
-                    log.severe("Failed running post deployment sql script " + config.getPostDeployment() + ": " + e.getMessage());
+                    log.severe("Failed running pre deployment sql script " + config.getPreDeployment() + ": " + e.getMessage());
                 } finally {
                     if (reader != null) {
                         try {
@@ -125,8 +125,8 @@ public class DatabaseImporter {
         try {
             final DriverConfig driverConfig = config.getDriver();
             if (driverConfig != null) {
-                final Driver driver = producer.produce();
-                connection = driver.connect(config.getJdbcConnection(), new Properties());
+                connection = producer.produce()
+                        .connect(config.getJdbcConnection(), new Properties());
             } else {
                 connection = DriverManager.getConnection(config.getJdbcConnection());
             }
@@ -161,7 +161,7 @@ public class DatabaseImporter {
                     builder = new StringBuilder();
                 }
             }
-            builder.append(content.substring(last));
+            builder.append(content.substring(last)).append(' ');
         }
     }
 }
